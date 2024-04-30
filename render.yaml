@@ -1,0 +1,15 @@
+services:
+- type: web
+  name: django-app
+  env: python
+  buildCommand: pip install -r requirements.txt
+  startCommand: gunicorn user_dashboard.wsgi:application --log-file -
+  envVars:
+  - key: DJANGO_SETTINGS_MODULE
+    value: user_dashboard.settings
+  - key: SECRET_KEY
+    value: 'django-insecure-n@5rwz054c3j5+u!zjqioj4f!fz2&!pf+__2^q=x2&7w0g6^%f'
+  - key: DEBUG
+    value: 'False'
+  - key: ALLOWED_HOSTS
+    value: '*'
