@@ -75,14 +75,14 @@ WSGI_APPLICATION = 'user_dashboard.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-          'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'user',
-        'USER': 'root',
-        'PASSWORD': 'Himan1234@',
-        'HOST':'localhost',
-        'PORT':'3306',
-    }
+   'default': {
+       'ENGINE': 'django.db.backends.postgresql_psycopg2',
+       'NAME': 'railway',
+       'USER': 'postgres',
+       'PASSWORD': 'jVSJnKZDANyplkRrKKrqSHHvCdYAWGtJ',
+       'HOST': 'viaduct.proxy.rlwy.net',
+       'PORT': '48774',
+   }
 }
 ROOT_URLCONF = 'user_dashboard.urls'
 AUTHENTICATION_BACKENDS = [
