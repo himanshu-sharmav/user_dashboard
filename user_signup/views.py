@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import login, authenticate,logout
-from .forms import UserSignupForm
+from .forms import UserSignupForm,BlogPostForm
+from .models import BlogPost,BlogCategory
 
 
 # Create your views here.
@@ -46,9 +47,41 @@ def login_view(request):
             return render(request, 'user_signup/login.html')
 
 def dashboard(request):
-      # replace 'login_view' with the name of your login view
-    # print(request.user)
-    return render(request, 'user_signup/dashboard.html', {'user': request.user})           
+    # form=UserSignupForm() 
+    if request.user.is_authenticated:
+        user = request.user
+        form = UserSignupForm(initial={'user_type': 'doctor' if user.is_doctor else 'patient'})
+        if user.is_doctor:
+            blog_posts = BlogPost.objects.filter(author=user)
+            return render(request, 'user_signup/dashboard.html', {'user': user, 'blog_posts': blog_posts, 'form': form})
+        else:
+            blog_posts = BlogPost.objects.filter(is_draft=False)
+            return render(request, 'user_signup/dashboard.html', {'user': user, 'blog_posts': blog_posts, 'form': form})
+    else:
+        return redirect('login')  
+
+def create_blog_post(request):
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            blog_post = form.save(commit=False)
+            blog_post.author = request.user
+            blog_post.save()
+            return redirect('dashboard')
+    else:
+        form = BlogPostForm()
+    return render(request, 'user_signup/create_blog_post.html', {'form': form})
+
+def view_blog_post(request, post_id):
+    post = BlogPost.objects.get(id=post_id)
+    return render(request, 'user_signup/view_blog_post.html', {'post': post})
+
+def view_all_blog_posts(request):
+    categories = BlogPost.objects.values_list('category__name', flat=True).distinct()
+    categorized_posts = [(category, BlogPost.objects.filter(category__name=category, is_draft=False)) for category in categories]
+    return render(request, 'user_signup/view_all_blog_posts.html', {'categorized_posts': categorized_posts})
+
+
 def logout_view(request):
     logout(request)
     return redirect('login')

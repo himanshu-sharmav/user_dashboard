@@ -76,12 +76,12 @@ WSGI_APPLICATION = 'user_dashboard.wsgi.application'
 
 DATABASES = {
    'default': {
-       'ENGINE': 'django.db.backends.postgresql_psycopg2',
+       'ENGINE': 'django.db.backends.mysql',
        'NAME': 'railway',
-       'USER': 'postgres',
-       'PASSWORD': 'jVSJnKZDANyplkRrKKrqSHHvCdYAWGtJ',
-       'HOST': 'viaduct.proxy.rlwy.net',
-       'PORT': '48774',
+       'USER': 'root',
+       'PASSWORD': 'nuMRrwiaxCLQRKhaqVgcbwlrGlJsOHDe',
+       'HOST': 'roundhouse.proxy.rlwy.net',
+       'PORT': '53780',
    }
 }
 ROOT_URLCONF = 'user_dashboard.urls'

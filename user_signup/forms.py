@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from .models import CustomUser
+from .models import CustomUser,BlogPost,BlogCategory
 from django.contrib.auth import authenticate
 
 class UserSignupForm(forms.ModelForm):
@@ -21,7 +21,21 @@ class UserSignupForm(forms.ModelForm):
         if user_type not in ['doctor', 'patient']:
             raise forms.ValidationError('Invalid User Type')
 
-
+CATEGORY_CHOICES = [
+    ('Mental Health', 'Mental Health'),
+    ('Heart Disease', 'Heart Disease'),
+    ('Covid19', 'Covid19'),
+    ('Immunization', 'Immunization'),
+]
+class BlogPostForm(forms.ModelForm):
+    # category = forms.ChoiceField(choices=CATEGORY_CHOICES)
+    class Meta:
+        model= BlogPost
+        fields=['title','image','category','summary','content','is_draft']
+    # category = forms.CharField(widget=forms.Select(choices=CATEGORY_CHOICES))
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['category'].queryset = BlogCategory.objects.all()
 # class UserLoginForm(AuthenticationForm):
 #     username = forms.CharField()
 #     password = forms.CharField(widget=forms.PasswordInput)
