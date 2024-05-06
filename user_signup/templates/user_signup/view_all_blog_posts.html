@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Blog Posts</title>
+    <!-- Add your CSS styles if needed -->
+    <style>
+        .img {
+            max-width: 100%;
+            height: auto;
+            max-height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>All Blog Posts</h1>
+    {% for category, posts in categorized_posts %}
+        <h2>{{ category }}</h2>
+        <ul>
+            {% for post in posts %}
+                <li>
+                    <h3>{{ post.title }}</h3>
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                    <p>{{ post.summary }}</p>
+                    <a href="{% url 'view_blog_post' post.id %}">...</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+</body>
+</html>
