@@ -64,26 +64,43 @@
     <h2>Your Blog Posts:</h2>
     {% if user.is_authenticated %}
         {% if user.is_doctor %}
-            <a href="{% url 'create_blog_post' %}" style="text-decoration: none; background-color: #4CAF50; color: white; padding: 10px 20px; border-radius: 5px;">Create New Blog Post</a>
-            {% if blog_posts %}
-                <ul>
-                    {% for post in blog_posts %}
-                        <li>
-                            <h3>{{ post.title }}</h3>
-                            <img src="{{ post.image.url }}" alt="{{ post.title }}">
-                            <p>{{ post.summary|truncatewords:15 }}</p>
-                            <a href="{% url 'view_blog_post' post.id %}">...</a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No blog posts found.</p>
-            {% endif %}
-
+        <a href="{% url 'create_blog_post' %}" style="text-decoration: none; background-color: #4CAF50; color: white; padding: 10px 20px; border-radius: 5px;">Create New Blog Post</a>
+        <h2>Draft Blogs</h2>
+        {% if draft_blogs %}
+            <ul>
+                {% for post in draft_blogs %}
+                    <li>
+                        <h3>{{ post.title }}</h3>
+                        <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                        <p>{{ post.summary|truncatewords:15 }}</p>
+                        <a href="{% url 'view_blog_post' post.id %}">...</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No draft blog posts found.</p>
+        {% endif %}
+        
+        <h2>Published Blogs</h2>
+        {% if published_blogs %}
+            <ul>
+                {% for post in published_blogs %}
+                    <li>
+                        <h3>{{ post.title }}</h3>
+                        <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                        <p>{{ post.summary|truncatewords:15 }}</p>
+                        <a href="{% url 'view_blog_post' post.id %}">...</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No published blog posts found.</p>
+        {% endif %}
        {% else %}
             <!-- For non-doctors: Provide link to view_blog_post.html -->
             <p>You are not authorized to create or manage blog posts.</p>
             <p><a href="{% url 'view_all_blog_posts' %}">View All Blog Posts</a></p>
+            <p><a href="{% url 'list_doctors' %}">View Doctors List</a></p>
         {% endif %}
     {% else %}
         <!-- If user is not authenticated -->

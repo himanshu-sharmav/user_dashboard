@@ -1,9 +1,15 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import login, authenticate,logout
-from .forms import UserSignupForm,BlogPostForm
-from .models import BlogPost,BlogCategory
-
-
+from .forms import UserSignupForm,BlogPostForm,AppointmentForm
+from .models import BlogPost,BlogCategory,CustomUser,Appointment
+from datetime import timedelta,time
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+from googleapiclient.discovery import build
+import datetime
+import os
+import datetime
 # Create your views here.
 
 def signup(request):
@@ -52,8 +58,13 @@ def dashboard(request):
         user = request.user
         form = UserSignupForm(initial={'user_type': 'doctor' if user.is_doctor else 'patient'})
         if user.is_doctor:
-            blog_posts = BlogPost.objects.filter(author=user)
-            return render(request, 'user_signup/dashboard.html', {'user': user, 'blog_posts': blog_posts, 'form': form})
+            all_blogs = BlogPost.objects.filter(author=user)
+
+            # Separate drafts from published blogs
+            draft_blogs = all_blogs.filter(is_draft=True)
+            published_blogs = all_blogs.filter(is_draft=False)
+
+            return render(request, 'user_signup/dashboard.html', {'user': user, 'draft_blogs': draft_blogs, 'published_blogs': published_blogs, 'form': form})
         else:
             blog_posts = BlogPost.objects.filter(is_draft=False)
             return render(request, 'user_signup/dashboard.html', {'user': user, 'blog_posts': blog_posts, 'form': form})
@@ -85,3 +96,70 @@ def view_all_blog_posts(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+def doctor_list(request):
+    doctors = CustomUser.objects.filter(is_doctor=True)
+    return render(request, 'user_signup/doctor_list.html', {'doctors': doctors})
+
+def book_appointment(request, doctor_id):
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            appointment.patient = request.user
+            appointment.doctor = CustomUser.objects.get(id=doctor_id)
+            today = datetime.datetime.today().date()
+
+# Convert appointment.start_time to a datetime
+            start_datetime = datetime.datetime.combine(today, appointment.start_time)
+
+# Now you can add the timedelta
+            end_datetime = start_datetime + timedelta(minutes=45)
+
+# And convert back to a time
+            appointment.end_time = end_datetime.time()
+            # appointment.end_time = appointment.start_time + timedelta(minutes=45)
+            appointment.save()
+            create_google_calender_event(appointment)
+            return redirect('appointment_details', appointment.id)
+    else:
+        form = AppointmentForm()
+    return render(request, 'user_signup/book_appointment.html', {'form': form})
+
+def appointment_details(request, appointment_id):
+    appointment = Appointment.objects.get(id=appointment_id)
+    return render(request, 'user_signup/appointment_details.html', {'appointment': appointment})
+
+def create_google_calender_event(appointment):
+    SCOPES=['https://www.googleapis.com/auth/calendar.events']
+    creds =None
+    if os.path.exists('token.json'):
+        creds = Credentials.from_authorized_user_file('token.json')
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'credentials.json', SCOPES)
+            creds = flow.run_local_server(port=0)
+            with open('token.json', 'w') as token:
+                token.write(creds.to_json())
+            flow.server.shutdown()    
+
+    service = build('calendar', 'v3', credentials=creds)
+
+    event = {
+        'summary': 'Appointment with ' + appointment.doctor.first_name + ' ' + appointment.doctor.last_name,
+        'description': 'Appointment with ' + appointment.doctor.first_name + ' ' + appointment.doctor.last_name,
+        'start': {
+            'dateTime': appointment.date.isoformat() + 'T' + appointment.start_time.isoformat(),
+            'timeZone': 'UTC',
+        },
+        'end': {
+            'dateTime': (appointment.date + datetime.timedelta(hours=appointment.start_time.hour, minutes=appointment.start_time.minute + 45)).isoformat()  + 'T' + appointment.start_time.isoformat(),
+            'timeZone': 'UTC',
+        },
+    }
+
+    event = service.events().insert(calendarId='primary', body=event).execute()
+    print('Event created: %s' % (event.get('htmlLink')))

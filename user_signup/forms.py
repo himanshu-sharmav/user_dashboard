@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from .models import CustomUser,BlogPost,BlogCategory
+from .models import CustomUser,BlogPost,BlogCategory,Appointment
 from django.contrib.auth import authenticate
 
 class UserSignupForm(forms.ModelForm):
@@ -39,3 +39,9 @@ class BlogPostForm(forms.ModelForm):
 # class UserLoginForm(AuthenticationForm):
 #     username = forms.CharField()
 #     password = forms.CharField(widget=forms.PasswordInput)
+
+class AppointmentForm(forms.ModelForm):
+    date = forms.DateField(input_formats=['%d-%m-%Y'])
+    class Meta:
+        model = Appointment
+        fields = ['speciality','date','start_time']   

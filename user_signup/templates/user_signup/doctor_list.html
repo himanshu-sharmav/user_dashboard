@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor List</title>
+    <style>
+         img {
+            max-width: 100%;
+            height: auto;
+            max-height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Doctor List</h1>
+    <ul>
+        {% for doctor in doctors %}
+            <li>
+                <img src="{{ doctor.profile_picture.url }}" alt="{{ doctor.first_name }} {{ doctor.last_name }}">
+                <p>{{ doctor.first_name }} {{ doctor.last_name }}</p>
+                <form action="{% url 'book_appointment' doctor.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Book Appointment</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
