@@ -1,6 +1,6 @@
-# User Dashboard
+# Appointment Dashboard 
 
-This is a Django project that provides a user dashboard.
+This is a Django project that provides a dashboard for doctors to discuss about a issue through blogs and allows patients to book appointments from a particular doctor.
 
 ## Getting Started
 
@@ -11,6 +11,7 @@ These instructions will get you a copy of the project up and running on your loc
 - Python 3.7 or higher
 - Django 3.2 or higher
 - MySQL
+- Google Calender api token.json
 # Installation
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
