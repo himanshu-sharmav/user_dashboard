@@ -23,7 +23,7 @@ This Django-based project provides a system for managing user profiles, authenti
 ## Setup and Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/himanshu-sharmavv/user_profile_management.git
+   git clone https://github.com/himanshu-sharmav/user_profile_management.git
    cd user_profile_management
    ```
 
