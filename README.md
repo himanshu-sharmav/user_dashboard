@@ -68,12 +68,6 @@ This project uses OAuth2 for Google APIs.
 ### Generating `token.json`
 After placing `credentials.json` in your project directory, run the application, which will guide you through OAuth authorization and automatically generate a `token.json` file. Keep these files **private** and **out of version control** by adding them to `.gitignore`.
 
-```bash
-# .gitignore
-credentials.json
-token.json
-```
-
 ## REST API Documentation
 This project also provides RESTful APIs for user management. Below is a sample of available endpoints:
 
@@ -83,15 +77,6 @@ This project also provides RESTful APIs for user management. Below is a sample o
 - **GET /api/user/{id}**: Retrieve a user's profile.
 - **PUT /api/user/{id}**: Update user information.
 
-## Deployment
-This project can be deployed on any platform that supports Django and MySQL (e.g., Heroku, Render, or AWS). To deploy:
-1. Configure environment variables for the database and secret keys.
-2. Use `gunicorn` or another WSGI HTTP server for production deployments.
-
-## Security Notes
-- Ensure you set up HTTPS for secure communication.
-- Use environment variables for sensitive data such as API keys, database credentials, and tokens.
-
 ## Authors
 - Himanshu Sharma
 
@@ -100,10 +85,3 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ```
 
 ---
-
-### Next Steps:
-1. **Rename the Repository**: Rename your GitHub repository from "user_dashboard" to **"user_profile_management"**.
-2. **Update `.gitignore`**: Ensure you have `credentials.json` and `token.json` listed in `.gitignore` to keep these files secure.
-3. **API Documentation**: Add detailed API documentation in the README for better understanding by others.
-
-This version of the README highlights both security practices and detailed setup instructions, making it easier for other developers to understand and contribute to the project. Let me know if you need further help!
